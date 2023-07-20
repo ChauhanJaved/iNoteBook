@@ -7,4 +7,4 @@ const notesSchema = new Schema({
    tag: {type: String, default: "General"} ,
    date: {type:date, default: Date.now}
   });
-  module.exports = mongoose.model('notes', notesSchema);
+  export default notesSchema;
