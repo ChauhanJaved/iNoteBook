@@ -11,7 +11,7 @@ import notesRoutes from './routes/notes.js';
 const app = express();
 
 // Setting the port number for the server to listen on
-const port = 3000;
+const port = 5000;
 
 // Parsing incoming JSON data in the request body
 app.use(json());
