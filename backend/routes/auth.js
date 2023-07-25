@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { body, validationResult } from "express-validator";
 const router = express.Router();
 import UserSchema from "../models/User.js";
+import bcrypt from "bcryptjs";
 
 // Create a User using: POST "/api/auth/". Doesn't require Auth
 router.post(
@@ -27,29 +28,47 @@ router.post(
       // If there are validation errors, return them as a JSON response
       return res.status(400).json({ errors: result.array() });
     }
+
+    // Log the request body (optional, for debugging)
     console.log(req.body);
 
     // Create a Mongoose model called 'UserModel' based on 'UserSchema'
     const UserModel = mongoose.model("users", UserSchema);
 
+    // Check if the email is already taken
     const existingUser = await UserModel.findOne({ email: req.body.email });
     if (existingUser) {
       return res.status(400).json({ error: "Email is already taken" });
     }
-    // Create a new user instance using the UserModel and request body
-    const newUser = new UserModel(req.body);
+
+    // Extract the data from req.body that you want to modify
+    const { name, email, password } = req.body;
+
+    // Generate a random salt
+    const saltRounds = 10;
+    const salt = await bcrypt.genSalt(saltRounds);
+
+    // Hash the password with the generated salt
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create a new user instance using the modified data
+    const newUser = new UserModel({
+      name, // Modified name
+      email, // Modified email
+      password: hashedPassword, // Modified and hashed password with salt
+    });
 
     // Save the new user to the database
     newUser
       .save()
       .then((savedUser) => {
         console.log("User saved:", savedUser);
-        // Return the request body as a JSON response
-        return res.json(req.body);
+        // Return the saved user as a JSON response
+        return res.json(newUser);
       })
       .catch((error) => {
         console.error("Error saving user:", error);
-        // Return the request body as a JSON response
+        // Return an error response as a JSON response
         return res.status(500).json({ error: "Internal Server Error" });
       });
   }
