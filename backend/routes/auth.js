@@ -5,10 +5,12 @@ const router = express.Router();
 import UserSchema from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import decoding_jwt from "../middleware/decoding_jwt.js"
 
-const JWT_SECRET = 'thisismysecretkey@@@';
 
-// Create a User using: POST "/api/auth/". Doesn't require Auth
+
+
+// Create a User using: POST "/api/auth/createuser". Doesn't require Auth *****************Route 1
 router.post(
   "/createuser",
   [
@@ -68,7 +70,7 @@ router.post(
         console.log("User saved:", savedUser);
         // Return the saved user as a JSON response
         const data = { user: { id: newUser.id } };
-        const authtoken = jwt.sign(data, JWT_SECRET);
+        const authtoken = jwt.sign(data, process.env.JWT_SECRET);
         return res.json(authtoken);
       })
       .catch((error) => {
@@ -79,7 +81,7 @@ router.post(
   }
 );
 
-// Endpoint for user login: POST "/api/auth/login"
+// Endpoint for user login: POST "/api/auth/login" *****************Route 2
 router.post(
   "/login",
   [
@@ -120,7 +122,7 @@ router.post(
 
       // If login successful, create a JWT token and send it as a JSON response
       const data = { user: { id: user.id } };
-      const authtoken = jwt.sign(data, JWT_SECRET);
+      const authtoken = jwt.sign(data, process.env.JWT_SECRET);
       return res.json(authtoken);
     } catch (error) {
       console.error(error.message);
@@ -130,4 +132,27 @@ router.post(
   }
 );
 
+// This is a route handler for the POST "/api/auth/getuser" endpoint. Route handlers take in a request and send back a response.
+router.post('/getuser', 
+  // 'decoding_jwt' is a middleware function that was defined elsewhere. 
+  // This middleware function decodes the JSON Web Token (JWT) provided in the request headers and attaches the payload of the JWT to 'req.data'.
+  decoding_jwt,
+  // This is an async function, which means it returns a Promise and can use the 'await' keyword to pause execution until a Promise is resolved.
+  async(req, res) => {
+    // Create a Mongoose model called 'UserModel' based on 'UserSchema'. 
+    // This allows us to perform CRUD operations on the 'users' collection in MongoDB.
+    const UserModel = mongoose.model("users", UserSchema);
+    // 'findById' is a Mongoose method that finds a document in the 'users' collection by its ID.
+    // Here we're passing the ID from the decoded JWT payload. 
+    // The '.select("-password")' method tells Mongoose not to include the password property in the returned user object.
+    const user = await UserModel.findById(req.data.user.id).select("-password");
+    // If the user was not found (i.e., 'findById' returned null), send back an error response.
+    if (!user) return res.status(400).json({error: "User not found"});
+    // If the user was found, return the user object as a JSON response. The user's password will not be included because of '.select("-password")'.
+    return res.json(user);
+  }
+);
+
+// Export the router for use in other modules
 export default router;
+

@@ -1,6 +1,8 @@
 // Importing required dependencies from "express" library
 import express from "express";
 import { json } from "express";
+import dotenv from 'dotenv';
+dotenv.config();
 
 // Importing custom modules (files)
 import connectToMongo from "./db.js";
