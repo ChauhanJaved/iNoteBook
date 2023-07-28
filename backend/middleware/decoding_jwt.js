@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 // This function is middleware for Express.js that decodes JWTs. 
 // Middleware is code that runs between receiving the request and sending the response and can operate on the request and response objects.
 const decoding_jwt = (req, res, next) => {
+    console.log(req.header("auth-token"));
     // The 'req' object represents the HTTP request. The 'header' method is used to get the value of a header in the request.
     // In this case, we are getting the value of the 'auth-token' header, which should contain the JWT.
     const token = req.header("auth-token");
@@ -18,7 +19,8 @@ const decoding_jwt = (req, res, next) => {
 
         // If the token was successfully decoded, the payload of the token is attached to the 'req' object.
         // This payload typically contains user information, and can be accessed in subsequent middleware and route handlers.
-        req.data = verified;
+        console.log("playload: "  + verified);
+        req.data  =  verified ;
 
         // The 'next' function is called to pass control to the next middleware function.
         // If 'next' is not called, the request-response cycle will hang indefinitely unless the response has been sent.
