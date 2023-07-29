@@ -79,5 +79,47 @@ router.post(
   }
 );
 
+// Define the route for updating a note
+router.put("/updatenote/:id", decoding_jwt, async (req, res) => {
+  try {
+    // Destructure title, description, and tag from request body
+    const {title, description, tag} = req.body;
+
+    // Define a new note object
+    const newNote = {};
+
+    // Assign values to the newNote object if they exist
+    if (title) {newNote.title = title };
+    if (description) {newNote.description = description};
+    if (tag) {newNote.tag = tag};
+
+    // Create the Notes model using the notes schema
+    const NotesModel = mongoose.model("notes", NotesSchema);
+
+    // Find note by id 
+    let note = await NotesModel.findById(req.params.id);
+
+    // If the note is not found, return a 404 error
+    if (!note) {
+      return res.status(404).send("Not Found");
+    }
+
+    // Check if the user is authorized to update the note
+    if (note.user.toString() != req.data.user.id){
+      return res.status(401).send("Not Allowed");
+    }
+
+    // Update the note and return the updated note
+    note = await NotesModel.findByIdAndUpdate(req.params.id, {$set: newNote}, {new: true});
+
+    // Send the updated note as a response
+    res.json({note});
+  } catch (error) {
+    // Log the error and return a 500 status code
+    console.error("Error saving notes:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 // Exporting the router to be used in other parts of the application.
 export default router;
