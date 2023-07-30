@@ -121,5 +121,36 @@ router.put("/updatenote/:id", decoding_jwt, async (req, res) => {
   }
 });
 
+// // Define the route for deleting a note
+router.delete("/deletenote/:id", decoding_jwt, async (req, res) => {
+  try {
+    // Get the NotesModel based on the NotesSchema
+    const NotesModel = mongoose.model("notes", NotesSchema);
+
+    // Find the note with the provided ID
+    let note = await NotesModel.findById(req.params.id);
+
+    // If the note doesn't exist, return a 404 Not Found response
+    if (!note) {
+      return res.status(404).send("Not Found");
+    }
+
+    // Check if the user attempting to delete the note is the same user who created it
+    if (note.user.toString() != req.data.user.id) {
+      return res.status(401).send("Not Allowed");
+    }
+
+    // Delete the note from the database
+    note = await NotesModel.findByIdAndDelete(req.params.id);
+
+    // Return a success response with the deleted note
+    res.json({ "Success": "Note has been deleted", "note": note });
+  } catch (error) {
+    // If an error occurs during the process, log the error and return a 500 Internal Server Error response
+    console.error("Error saving notes:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 // Exporting the router to be used in other parts of the application.
 export default router;
