@@ -121,7 +121,7 @@ router.put("/updatenote/:id", decoding_jwt, async (req, res) => {
   }
 });
 
-// // Define the route for deleting a note
+// Define the route for deleting a note
 router.delete("/deletenote/:id", decoding_jwt, async (req, res) => {
   try {
     // Get the NotesModel based on the NotesSchema

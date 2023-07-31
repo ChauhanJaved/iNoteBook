@@ -67,11 +67,13 @@ router.post(
     newUser
       .save()
       .then((savedUser) => {
+        
         console.log("User saved:", savedUser);
         // Return the saved user as a JSON response
         const data = { user: { id: newUser.id } };
+        console.log(process.env.JWT_SECRET);
         const authtoken = jwt.sign(data, process.env.JWT_SECRET);
-        return res.json(authtoken);
+        return res.send(authtoken);
       })
       .catch((error) => {
         console.error("Error saving user:", error);
