@@ -4,6 +4,9 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Navbar } from './components/Navbar';
 import { Home } from './components/Home';
 import { About } from './components/About';
+import { NoteProvider } from './context/NoteContext';
+
+
 function App() {
   const router = createBrowserRouter([
     {
@@ -29,7 +32,9 @@ function App() {
   
   return (
    <div>
-      <RouterProvider router={router}/>
+    
+    <RouterProvider router={router}/>
+    
    </div>
   );
 }
