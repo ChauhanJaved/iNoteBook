@@ -2,14 +2,13 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 
 export const Navbar = () => {
-  let location = useLocation();
-  console.log(location);
+  let location = useLocation();  
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
       <div className="container-fluid">
-        <a className="navbar-brand" href="#">
+        <Link className="navbar-brand" to="/">
           iNotebook
-        </a>
+        </Link>
         <button
           className="navbar-toggler"
           type="button"
