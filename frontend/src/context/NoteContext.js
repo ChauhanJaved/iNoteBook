@@ -83,8 +83,14 @@ export const NoteProvider = (props) =>{
         }
         setNotes(notes.concat(note));
     };
+    const deleteNote = (id) => {        
+        setNotes(notes.filter(note=>note._id!==id))
+    };
+    const updateNote = (id, title, description, tag) => {
+        console.log(id + " " + title + " " + description + " " + tag)
+    };
     return(
-        <NoteContext.Provider value={{notes, addNote}}>
+        <NoteContext.Provider value={{notes, addNote, deleteNote, updateNote}}>
             {props.children}
         </NoteContext.Provider>
     );

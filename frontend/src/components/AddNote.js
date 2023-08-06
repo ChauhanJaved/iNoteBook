@@ -53,7 +53,7 @@ export default function AddNote() {
           />
         </div>
         <button type="submit" className="btn btn-primary" onClick={handdleAddNote}>
-          Submit
+          Add Note
         </button>
       </form>
     </div>
