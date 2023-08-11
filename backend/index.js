@@ -2,6 +2,8 @@
 import express from "express";
 import { json } from "express";
 import dotenv from 'dotenv';
+import cors from 'cors';
+
 dotenv.config();
 
 // Importing custom modules (files)
@@ -12,11 +14,14 @@ import notesRoutes from './routes/notes.js';
 // Creating an Express application instance
 const app = express();
 
+
+
 // Setting the port number for the server to listen on
 const port = 5000;
 
 // Parsing incoming JSON data in the request body
 app.use(json());
+app.use(cors());
 
 // Available Routes: Configuring routes for the application
 // When a request comes to '/api/auth', the 'authRoutes' will be used to handle it.
