@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { NoteContext } from "../context/NoteContext";
 
 export default function AddNote() {
+  //destructuring notes from NoteContext
   const { addNote } = useContext(NoteContext);
   const [note, setNote] = useState({title: "", description: "", tag: "default"})
   const onChange = (e) =>{
@@ -49,7 +50,7 @@ export default function AddNote() {
             className="form-control"
             id="tag"
             name="tag"
-            onChange={onchange}
+            onChange={onChange}
           />
         </div>
         <button type="submit" className="btn btn-primary" onClick={handdleAddNote}>
