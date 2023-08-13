@@ -1,30 +1,32 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState  } from "react";
 import { NoteContext } from "../context/NoteContext";
 import NoteItem from "./NoteItem";
 import AddNote from "./AddNote";
 import UpdateNoteModal from "./UpdateNoteModal";
 
 export default function Notes() {
+  const ref = useRef(null);
+  const refClose = useRef(null);
   //destructuring notes from NoteContext
-  const { notes, getNotes } = useContext(NoteContext);
+  const { notes, getNotes, updateNote } = useContext(NoteContext);
+  const [editNote, setEditNote] = useState({id: "", etitle: "", edescription: "", etag: ""});
+  
   useEffect(() => {
-    getNotes();
+    getNotes();    
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  const ref = useRef(null);  
-  const [note, setNote] = useState({etitle: "", edescription: "", etag: ""});
-  const updateNote = (note) => {
+  }, []);  
+  
+
+  const openEditNoteModal = (currentNote) => {        
+    //code to update state
+    setEditNote({id: currentNote._id, etitle: currentNote.title, edescription: currentNote.description, etag:currentNote.tag})
     ref.current.click();
-    setNote({
-      id: note._id,
-      etitle: note.title,
-      edescription: note.description,
-      etag: note.tag,
-    });
   };
+ 
   const handleClick = (e) => {
-    console.log("Updating the note...", note);
+    updateNote(editNote.id, editNote.etitle, editNote.edescription, editNote.etag);
     e.preventDefault();
+    refClose.current.click();
 }
   return (
     <>
@@ -39,14 +41,15 @@ export default function Notes() {
         Update Note
       </button>      
       <UpdateNoteModal      
-        note={note}
-        setNote={setNote}
+        editNote={editNote}
+        setEditNote={setEditNote}
         handleClick={handleClick}
+        refClose={refClose}
       />
       <div className="row my-3">
         <h2>Your Notes</h2>
         {notes.map((note, index) => {
-          return <NoteItem key={index} note={note} updateNote={updateNote} />;
+          return <NoteItem key={index} note={note} openEditNoteModal={openEditNoteModal} />;
         })}
       </div>
     </>
