@@ -18,7 +18,7 @@ export const NoteProvider = (props) => {
       },
     });
     const json = await response.json();
-    console.log(json);
+    //console.log(json);
     setNotes(json);
   };
 

@@ -2,15 +2,30 @@ import React, { useContext, useState } from "react";
 import { NoteContext } from "../context/NoteContext";
 
 export default function AddNote() {
-  //destructuring notes from NoteContext
   const { addNote } = useContext(NoteContext);
-  const [note, setNote] = useState({title: "", description: "", tag: "default"})
+  const [note, setNote] = useState({title: "", description: "", tag: "General"})
+  const [isValid, setIsValid] = useState(false);
+
   const onChange = (e) =>{
-    setNote({...note,[e.target.name]: e.target.value})    
+    const updatedNote = { ...note, [e.target.name]: e.target.value };
+    setNote(updatedNote);
+    validateForm(updatedNote);    
   };
+  
+  // validate form
+  const validateForm = (updatedNote) =>{    
+    if(updatedNote.title.length >= 3 && updatedNote.description.length >= 6){
+      setIsValid(true);
+    }else{
+      setIsValid(false);
+    }
+  };
+  
+  // adding notes in client side and database
   const handdleAddNote = (e) =>{
     e.preventDefault();    
     addNote(note.title, note.description, note.tag);
+    setNote({title: "", description: "", tag: "General"});    
   };
 
   return (
@@ -26,7 +41,9 @@ export default function AddNote() {
             className="form-control"
             id="title"
             name="title"   
-            onChange={onChange}         
+            onChange={onChange}
+            minLength={3}
+            value={note.title}                     
           />
         </div>
         <div className="mb-3">
@@ -38,7 +55,9 @@ export default function AddNote() {
             className="form-control"
             id="description"
             name="description"
-            onChange={onChange}            
+            onChange={onChange}
+            minLength={6}
+            value={note.description}            
           />
         </div>
         <div className="mb-3">
@@ -51,9 +70,10 @@ export default function AddNote() {
             id="tag"
             name="tag"
             onChange={onChange}
+            value={note.tag}
           />
         </div>
-        <button type="submit" className="btn btn-primary" onClick={handdleAddNote}>
+        <button type="submit" className="btn btn-primary" onClick={handdleAddNote} disabled={!isValid}>
           Add Note
         </button>
       </form>

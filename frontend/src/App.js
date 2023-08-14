@@ -4,6 +4,8 @@ import { Navbar } from "./components/Navbar";
 import { Home } from "./components/Home";
 import { About } from "./components/About";
 import { NoteProvider } from "./context/NoteContext";
+import Login from "./components/Login";
+import Signup from "./components/Signup";
 
 function App() {
   const router = createBrowserRouter([
@@ -29,6 +31,28 @@ function App() {
         </div>
       ),
     },
+    {
+      path: "/login",
+      element: (
+        <div>
+          <Navbar />
+          <div className="container">
+            <Login /> 
+          </div>
+        </div>
+      ),
+    },
+    {
+      path: "/signup",
+      element: (
+        <div>
+          <Navbar />
+          <div className="container">
+           <Signup />                      
+          </div>
+        </div>
+      ),
+    }
   ]);
 
   return (
