@@ -111,7 +111,7 @@ router.post(
       if (!user) {
         return res
           .status(400)
-          .json({ error: "Please try to login with correct credentials" });
+          .json({ success: false, error: "Please try to login with correct credentials" });
       }
 
       // Compare the provided password with the hashed password in the database
@@ -119,13 +119,13 @@ router.post(
       if (!passwordCompare) {
         return res
           .status(400)
-          .json({ error: "Please try to login with correct password" });
+          .json({success: false, error: "Please try to login with correct password" });
       }
 
       // If login successful, create a JWT token and send it as a JSON response
       const data = { user: { id: user.id } };
-      const authtoken = jwt.sign(data, process.env.JWT_SECRET);
-      return res.json(authtoken);
+      const authtoken = jwt.sign(data, process.env.JWT_SECRET);      
+      return res.json({success: true, authtoken: authtoken});
     } catch (error) {
       console.error(error.message);
       // Return an error response as a JSON response

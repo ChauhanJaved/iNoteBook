@@ -46,12 +46,16 @@ export default function Notes() {
         handleClick={handleClick}
         refClose={refClose}
       />
-      <div className="row my-3">
-        <h2>Your Notes</h2>
-        {notes.map((note, index) => {
-          return <NoteItem key={index} note={note} openEditNoteModal={openEditNoteModal} />;
-        })}
-      </div>
+     <div className="row my-3">
+    <h2>Your Notes</h2>
+    {
+        notes.length === 0? 
+        <div>No Notes</div>: 
+        notes.map((note, index) => {
+            return <NoteItem key={index} note={note} openEditNoteModal={openEditNoteModal} />;
+        })
+    }
+</div>
     </>
   );
 }

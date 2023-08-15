@@ -18,7 +18,6 @@ export const NoteProvider = (props) => {
       },
     });
     const json = await response.json();
-    //console.log(json);
     setNotes(json);
   };
 
@@ -33,18 +32,9 @@ export const NoteProvider = (props) => {
       },
       body: JSON.stringify({ title, description, tag }),
     });
-    const json = await response.json();
-    console.log(json);
+    const json = await response.json();   
     // Logic to add in client
-    const note = {
-      _id: "61322f19553781a8ca8d0e07",
-      user: "6131dc5e3e4037cd4734a067",
-      title: title,
-      description: description,
-      tag: tag,
-      date: "2021-09-07T14:20:09.668Z",
-      __v: 0,
-    };
+    const note = json
     setNotes(notes.concat(note));
   };
   const deleteNote = async (id) => {
@@ -73,7 +63,7 @@ export const NoteProvider = (props) => {
       },
       body: JSON.stringify({ title, description, tag }),
     });
-    const json = await response.json();
+    const json = await response.json();    
     console.log(json);
     // Logic to edit in client
     const updatedNotes = [...notes];
