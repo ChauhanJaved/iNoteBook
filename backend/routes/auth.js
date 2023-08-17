@@ -31,7 +31,7 @@ router.post(
     const result = validationResult(req);
     if (!result.isEmpty()) {
       // If there are validation errors, return them as a JSON response
-      return res.status(400).json({ errors: result.array() });
+      return res.status(400).json({ success: false, error: result.array() });
     }
 
     // Log the request body (optional, for debugging)
@@ -43,7 +43,7 @@ router.post(
     // Check if the email is already taken
     const existingUser = await UserModel.findOne({ email: req.body.email });
     if (existingUser) {
-      return res.status(400).json({ error: "Email is already taken" });
+      return res.status(400).json({ success: false, error: "Email is already taken" });
     }
 
     // Extract the data from req.body that you want to modify
@@ -73,12 +73,12 @@ router.post(
         const data = { user: { id: newUser.id } };
         console.log(process.env.JWT_SECRET);
         const authtoken = jwt.sign(data, process.env.JWT_SECRET);
-        return res.send(authtoken);
+        return res.json({success: true, authtoken: authtoken});
       })
       .catch((error) => {
         console.error("Error saving user:", error);
         // Return an error response as a JSON response
-        return res.status(500).json({ error: "Internal Server Error" });
+        return res.status(500).json({ success: false,  error: "Internal Server Error" });
       });
   }
 );
