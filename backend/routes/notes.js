@@ -46,7 +46,8 @@ router.post(
       const result = validationResult(req);
       if (!result.isEmpty()) {
         // If there are validation errors, return them with a 400 status code.
-        return res.status(400).json({ errors: result.array() });
+        const errors = result.array();      
+        return res.status(400).json({ success: false, error: errors.map(error => error.msg).join(", ")});        
       }
       // Creating a mongoose model using the Notes schema.
       const NotesModel = mongoose.model("notes", NotesSchema);
@@ -64,17 +65,17 @@ router.post(
         .save()
         .then((savedNotes) => {
           console.log("Notes saved:", savedNotes);
-          return res.json(savedNotes);
+          return res.json({success: true, note: savedNotes});
         })
         .catch((error) => {
           // Handling any errors and returning a 500 status code.
           console.error("Error saving user:", error);
-          return res.status(500).json({ error: "Internal Server Error" });
+          return res.status(500).json({ success: false, error: "Internal Server Error"});
         });
     } catch (error) {
       // Handling any errors and returning a 500 status code.
       console.error("Error saving notes:", error);
-      return res.status(500).json({ error: "Internal Server Error" });
+      return res.status(500).json({ success: false, error: "Internal Server Error"});
     }
   }
 );

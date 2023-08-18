@@ -1,7 +1,9 @@
-import { React, useState } from "react";
+import { React, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AlertContext } from "../context/AlertContext";
 
 export default function Login() {
+  const { showAlert } = useContext(AlertContext);
   const navigate = useNavigate();
   const host = "http://localhost:5000";
   const [credentials, setCredentials] = useState({ email: "", password: "" });
@@ -20,10 +22,10 @@ export default function Login() {
     const json = await response.json();
     if (json.success) {
       localStorage.setItem('token', json.authtoken);
-      console.log(json.authtoken);
+      showAlert("Logged in successfully", "success");      
       navigate('/');
     } else {
-      alert(json.error);
+      showAlert(json.error, "danger");      
     }
   };
   return (

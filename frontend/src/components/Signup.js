@@ -1,6 +1,10 @@
-import { React, useState } from "react";
+import { React, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { AlertContext } from "../context/AlertContext";
 
 export default function Signup() {
+  const { showAlert } = useContext(AlertContext);
+  const navigate = useNavigate();
   const host = "http://localhost:5000";
   const [credentials, setCredentials] = useState({
     name: "",
@@ -13,7 +17,14 @@ export default function Signup() {
   };
   const handdleOnSubmit = async (e) => {
     e.preventDefault();
-    const { name, email, password } = credentials;
+    
+    const { name, email, password, cpassword } = credentials;
+    // check if password and cpassword are same
+    if (password !== cpassword) {
+      showAlert("Passwords do not match", "danger");      
+      return;
+    }   
+    
     const response = await fetch(`${host}/api/auth/createuser`, {
       method: "POST",
       headers: {
@@ -26,9 +37,10 @@ export default function Signup() {
     if (json.success) {
       // Save the auth token and redirect
       localStorage.setItem("token", json.authtoken);
-      console.log(json);      
+      showAlert("Congratulation, your account has been created successfully", "success"); 
+      navigate("/");            
     } else {
-      alert(json.error);
+      showAlert(json.error, "danger");      
     }
   };
 
@@ -47,6 +59,7 @@ export default function Signup() {
             aria-describedby="emailHelp"
             autoComplete="username"
             onChange={handdleOnChange}
+            required={true}            
           />
         </div>
         <div className="mb-3">
@@ -61,6 +74,7 @@ export default function Signup() {
             aria-describedby="emailHelp"
             autoComplete="username"
             onChange={handdleOnChange}
+            required={true}
           />
           <div id="emailHelp" className="form-text">
             We'll never share your email with anyone else.
@@ -77,6 +91,8 @@ export default function Signup() {
             name="password"
             autoComplete="current-password"
             onChange={handdleOnChange}
+            required={true}
+            minLength={6}
           />
         </div>
         <div className="mb-3">
@@ -90,6 +106,8 @@ export default function Signup() {
             name="cpassword"
             autoComplete="current-password"
             onChange={handdleOnChange}
+            required={true}
+            minLength={6}
           />
         </div>
         <button type="submit" className="btn btn-primary">

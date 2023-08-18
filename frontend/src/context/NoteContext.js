@@ -1,7 +1,8 @@
-import React, { createContext, useState } from "react";
-
+import React, { createContext, useState, useContext } from "react";
+import { AlertContext } from "./AlertContext";
 export const NoteContext = createContext();
 export const NoteProvider = (props) => {
+  const { showAlert } = useContext(AlertContext);
   const host = "http://localhost:5000";
   const notesInitial = [];
   const [notes, setNotes] = useState(notesInitial);
@@ -21,7 +22,7 @@ export const NoteProvider = (props) => {
     setNotes(json);
   };
 
-  const addNote = async (title, description, tag) => {    
+  const addNote = async (title, description, tag) => {
     // API Call
     const response = await fetch(`${host}/api/notes/addnote`, {
       method: "POST",
@@ -32,10 +33,15 @@ export const NoteProvider = (props) => {
       },
       body: JSON.stringify({ title, description, tag }),
     });
-    const json = await response.json();   
-    // Logic to add in client
-    const note = json
-    setNotes(notes.concat(note));
+    const json = await response.json();
+    if (json.success) {
+      // Logic to add in client
+      const note = json.note;
+      setNotes(notes.concat(note));
+      showAlert("Note added successfully", "success");
+    } else {
+      showAlert(json.error, "danger");      
+    }
   };
   const deleteNote = async (id) => {
     // API Call
@@ -45,7 +51,7 @@ export const NoteProvider = (props) => {
         "Content-Type": "application/json",
         "auth-token":
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjRkMWQ4MjY0MmEzMmJiMWM3MDZmZTYyIn0sImlhdCI6MTY5MTQ3Mzk3NH0.LRJa_aeb6UFTCfti8I2oypNxqTyLoI60Zn4oqrBcSA8",
-      }
+      },
     });
     const json = await response.json();
     console.log(json);
@@ -63,7 +69,7 @@ export const NoteProvider = (props) => {
       },
       body: JSON.stringify({ title, description, tag }),
     });
-    const json = await response.json();    
+    const json = await response.json();
     console.log(json);
     // Logic to edit in client
     const updatedNotes = [...notes];
