@@ -1,10 +1,12 @@
 import React, { useContext, useEffect, useRef, useState  } from "react";
+import { useNavigate } from "react-router-dom";
 import { NoteContext } from "../context/NoteContext";
 import NoteItem from "./NoteItem";
 import AddNote from "./AddNote";
 import UpdateNoteModal from "./UpdateNoteModal";
 
 export default function Notes() {
+  const navigate = useNavigate();  
   const ref = useRef(null);
   const refClose = useRef(null);
   //destructuring notes from NoteContext
@@ -12,7 +14,12 @@ export default function Notes() {
   const [editNote, setEditNote] = useState({id: "", etitle: "", edescription: "", etag: ""});
   
   useEffect(() => {
-    getNotes();    
+    if(localStorage.getItem('token')){
+      getNotes();
+    } 
+    else{
+      navigate('/login');
+    }     
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);  
   

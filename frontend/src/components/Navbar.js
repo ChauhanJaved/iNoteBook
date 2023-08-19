@@ -3,6 +3,10 @@ import { Link, useLocation } from "react-router-dom";
 
 export const Navbar = () => {
   let location = useLocation();
+  const handleLogOut = () => {
+    localStorage.removeItem('token');
+    window.location.reload();
+  }
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
       <div className="container-fluid">
@@ -44,13 +48,14 @@ export const Navbar = () => {
                 About
               </Link>
             </li>
-          </ul>
-          <Link type="button" className="btn btn-primary mx-2" to="/login">
-            LogIn
-          </Link>
-          <Link type="button" className="btn btn-primary mx-2" to="/signup">
-            SignUp
-          </Link>
+          </ul>              
+          {             
+             localStorage.getItem('token')
+             ? (<><Link type="button" className="btn btn-primary mx-2" onClick={handleLogOut} >LogOut</Link></>)
+             : (<><Link type="button" className="btn btn-primary mx-2" to="/login">LogIn</Link>
+               <Link type="button" className="btn btn-primary mx-2" to="/signup">SignUp</Link></>
+               )              
+          }             
         </div>
       </div>
     </nav>

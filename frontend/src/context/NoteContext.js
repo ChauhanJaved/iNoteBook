@@ -15,8 +15,7 @@ export const NoteProvider = (props) => {
       headers: {
         "Content-Type": "application/json",
         "auth-token":
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjRkMWQ4MjY0MmEzMmJiMWM3MDZmZTYyIn0sImlhdCI6MTY5MTQ3Mzk3NH0.LRJa_aeb6UFTCfti8I2oypNxqTyLoI60Zn4oqrBcSA8",
-      },
+          localStorage.getItem("token")       },
     });
     const json = await response.json();
     setNotes(json);
@@ -29,7 +28,7 @@ export const NoteProvider = (props) => {
       headers: {
         "Content-Type": "application/json",
         "auth-token":
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjRkMWQ4MjY0MmEzMmJiMWM3MDZmZTYyIn0sImlhdCI6MTY5MTQ3Mzk3NH0.LRJa_aeb6UFTCfti8I2oypNxqTyLoI60Zn4oqrBcSA8",
+          localStorage.getItem('token')
       },
       body: JSON.stringify({ title, description, tag }),
     });
@@ -50,13 +49,18 @@ export const NoteProvider = (props) => {
       headers: {
         "Content-Type": "application/json",
         "auth-token":
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjRkMWQ4MjY0MmEzMmJiMWM3MDZmZTYyIn0sImlhdCI6MTY5MTQ3Mzk3NH0.LRJa_aeb6UFTCfti8I2oypNxqTyLoI60Zn4oqrBcSA8",
+          localStorage.getItem('token')
       },
     });
     const json = await response.json();
-    console.log(json);
-    // Logic to delete in client
-    setNotes(notes.filter((note) => note._id !== id));
+    if (json.success) {
+      // Logic to delete in client
+      setNotes(notes.filter((note) => note._id !== id));      
+      showAlert("Note deleted successfully", "success");
+    } else {
+      showAlert(json.error, "danger");      
+    }    
+    
   };
   const updateNote = async (id, title, description, tag) => {
     // API Call
@@ -65,21 +69,23 @@ export const NoteProvider = (props) => {
       headers: {
         "Content-Type": "application/json",
         "auth-token":
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjRkMWQ4MjY0MmEzMmJiMWM3MDZmZTYyIn0sImlhdCI6MTY5MTQ3Mzk3NH0.LRJa_aeb6UFTCfti8I2oypNxqTyLoI60Zn4oqrBcSA8",
+          localStorage.getItem('token')
       },
       body: JSON.stringify({ title, description, tag }),
     });
     const json = await response.json();
-    console.log(json);
-    // Logic to edit in client
-    const updatedNotes = [...notes];
-    const index = notes.findIndex((note) => note._id === id);
-    if (index !== -1) {
-      updatedNotes[index].title = title;
-      updatedNotes[index].description = description;
-      updatedNotes[index].tag = tag;
+    if (json.success) {
+      // Logic to update in client
+      const note = json.note;
+      const index = notes.findIndex((note) => note._id === id);
+      const updatedNotes = [...notes];
+      updatedNotes[index] = note;
       setNotes(updatedNotes);
-    }
+      showAlert("Note updated successfully", "success");
+    } else {
+      showAlert(json.error, "danger");      
+    }    
+ 
   };
   return (
     <NoteContext.Provider

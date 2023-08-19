@@ -46,8 +46,13 @@ router.post(
       const result = validationResult(req);
       if (!result.isEmpty()) {
         // If there are validation errors, return them with a 400 status code.
-        const errors = result.array();      
-        return res.status(400).json({ success: false, error: errors.map(error => error.msg).join(", ")});        
+        const errors = result.array();
+        return res
+          .status(400)
+          .json({
+            success: false,
+            error: errors.map((error) => error.msg).join(", "),
+          });
       }
       // Creating a mongoose model using the Notes schema.
       const NotesModel = mongoose.model("notes", NotesSchema);
@@ -65,17 +70,21 @@ router.post(
         .save()
         .then((savedNotes) => {
           console.log("Notes saved:", savedNotes);
-          return res.json({success: true, note: savedNotes});
+          return res.json({ success: true, note: savedNotes });
         })
         .catch((error) => {
           // Handling any errors and returning a 500 status code.
           console.error("Error saving user:", error);
-          return res.status(500).json({ success: false, error: "Internal Server Error"});
+          return res
+            .status(500)
+            .json({ success: false, error: "Internal Server Error" });
         });
     } catch (error) {
       // Handling any errors and returning a 500 status code.
       console.error("Error saving notes:", error);
-      return res.status(500).json({ success: false, error: "Internal Server Error"});
+      return res
+        .status(500)
+        .json({ success: false, error: "Internal Server Error" });
     }
   }
 );
@@ -84,37 +93,47 @@ router.post(
 router.put("/updatenote/:id", decoding_jwt, async (req, res) => {
   try {
     // Destructure title, description, and tag from request body
-    const {title, description, tag} = req.body;
+    const { title, description, tag } = req.body;
 
     // Define a new note object
     const newNote = {};
 
     // Assign values to the newNote object if they exist
-    if (title) {newNote.title = title };
-    if (description) {newNote.description = description};
-    if (tag) {newNote.tag = tag};
+    if (title) {
+      newNote.title = title;
+    }
+    if (description) {
+      newNote.description = description;
+    }
+    if (tag) {
+      newNote.tag = tag;
+    }
 
     // Create the Notes model using the notes schema
     const NotesModel = mongoose.model("notes", NotesSchema);
 
-    // Find note by id 
+    // Find note by id
     let note = await NotesModel.findById(req.params.id);
 
     // If the note is not found, return a 404 error
     if (!note) {
-      return res.status(404).send("Not Found");
+      return res.status(404).json({ success: false, error: "Note not found" });
     }
 
     // Check if the user is authorized to update the note
-    if (note.user.toString() != req.data.user.id){
-      return res.status(401).send("Not Allowed");
+    if (note.user.toString() != req.data.user.id) {
+      return res.status(401).json({ success: false, error: "Note allowed" });
     }
 
     // Update the note and return the updated note
-    note = await NotesModel.findByIdAndUpdate(req.params.id, {$set: newNote}, {new: true});
+    note = await NotesModel.findByIdAndUpdate(
+      req.params.id,
+      { $set: newNote },
+      { new: true }
+    );
 
     // Send the updated note as a response
-    res.json({note});
+    res.json({ success: true, note: note });
   } catch (error) {
     // Log the error and return a 500 status code
     console.error("Error saving notes:", error);
@@ -133,23 +152,25 @@ router.delete("/deletenote/:id", decoding_jwt, async (req, res) => {
 
     // If the note doesn't exist, return a 404 Not Found response
     if (!note) {
-      return res.status(404).send("Not Found");
+      return res.status(404).json({ success: false, error: "Note not found" });
     }
 
     // Check if the user attempting to delete the note is the same user who created it
     if (note.user.toString() != req.data.user.id) {
-      return res.status(401).send("Not Allowed");
+      return res.status(401).json({ success: false, error: "Not Allowed" });
     }
 
     // Delete the note from the database
     note = await NotesModel.findByIdAndDelete(req.params.id);
 
     // Return a success response with the deleted note
-    res.json({ "Success": "Note has been deleted", "note": note });
+    res.json({ success: true, note: note });
   } catch (error) {
     // If an error occurs during the process, log the error and return a 500 Internal Server Error response
     console.error("Error saving notes:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ success: false, error: "Internal Server Error" });
   }
 });
 
