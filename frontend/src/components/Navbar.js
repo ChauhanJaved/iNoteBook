@@ -11,6 +11,8 @@ export const Navbar = () => {
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
       <div className="container-fluid">
         <Link className="navbar-brand" to="/">
+          <i className="far fa-edit mx-2">          
+          </i>     
           iNotebook
         </Link>
         <button
