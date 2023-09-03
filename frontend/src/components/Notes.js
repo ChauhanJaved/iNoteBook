@@ -36,7 +36,7 @@ export default function Notes() {
     refClose.current.click();
 }
   return (
-    <>
+    <>      
       <AddNote />
       <button
         ref={ref}
