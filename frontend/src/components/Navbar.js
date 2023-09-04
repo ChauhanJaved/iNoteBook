@@ -53,9 +53,9 @@ export const Navbar = () => {
           </ul>              
           {             
              localStorage.getItem('token')
-             ? (<><Link type="button" className="btn btn-primary mx-2" onClick={handleLogOut} >LogOut</Link></>)
-             : (<><Link type="button" className="btn btn-primary mx-2" to="/login">LogIn</Link>
-               <Link type="button" className="btn btn-primary mx-2" to="/signup">SignUp</Link></>
+             ? (<><Link type="button" className="btn btn-primary mx-2" onClick={handleLogOut} >Log out</Link></>)
+             : (<><Link type="button" className="btn btn-primary mx-2" to="/login">Log in</Link>
+               <Link type="button" className="btn btn-primary mx-2" to="/signup">Sign up</Link></>
                )              
           }             
         </div>
